@@ -4,6 +4,6 @@ import java.util.HashMap;
 
 public interface UserService {
 
-    String singup(HashMap<String, Object> params);
+    String singup();
 
 }

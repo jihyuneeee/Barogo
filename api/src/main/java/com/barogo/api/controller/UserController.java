@@ -28,7 +28,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/user/singup")
-    public String singup(
+    public void singup(
             @RequestBody @Validated UserDTO userDTO, BindingResult bindingResult,
             HttpServletRequest req, HashMap<String, Object> params) {
         System.out.println("singup");
@@ -48,8 +48,8 @@ public class UserController {
 
         }
 
-        return null;
+        
 
-        // return userService.singup(params);
+        // return userService.singup();
     }
 }

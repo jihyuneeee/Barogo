@@ -1,46 +1,33 @@
 package com.barogo.api.controller;
 
-import java.util.HashMap;
 import java.util.List;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.barogo.api.model.TokeInfo;
 import com.barogo.api.model.UserDTO;
 import com.barogo.api.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Controller
+@RequiredArgsConstructor
 public class UserController {
 
     @Resource
     UserService userService;
 
-    @PostMapping("/user/singup")
-    public void singup(
-            @RequestBody @Validated UserDTO userDTO, BindingResult bindingResult,
-            HttpServletRequest req, HashMap<String, Object> params) {
-        System.out.println("singup");
-
-        System.out.println("params : " + userDTO.getId());
-        System.out.println("params : " + userDTO.getName());
-        System.out.println("에러 존재? : " + bindingResult.hasErrors());
+    @PostMapping("/auth/singup")
+    public void singup(@RequestBody @Validated UserDTO userDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-
-            System.out.println("에러 존재" + bindingResult);
-
+            System.out.println("에러 있음");
             List<ObjectError> errorList = bindingResult.getAllErrors();
             for (ObjectError objectError : errorList) {
                 System.out.println("error==" + objectError.getDefaultMessage());
@@ -48,8 +35,28 @@ public class UserController {
 
         }
 
-        
+        userService.singup(userDTO);
 
-        // return userService.singup();
     }
+
+    @PostMapping(value = "/auth/login")
+    @ResponseBody
+    public TokeInfo login(@RequestBody @Validated UserDTO userDTO, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            System.out.println("에러 있음");
+            List<ObjectError> errorList = bindingResult.getAllErrors();
+            for (ObjectError objectError : errorList) {
+                System.out.println("error==" + objectError.getDefaultMessage());
+            }
+
+        }
+
+        TokeInfo info = userService.login(userDTO);
+        System.out.println("access : " + info.getGrantType());
+        System.out.println("access : " + info.getAccessToken());
+        System.out.println("access : " + info.getRefeshToken());
+        return info;
+    }
+
 }

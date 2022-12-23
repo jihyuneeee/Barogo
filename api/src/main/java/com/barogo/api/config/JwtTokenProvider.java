@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.barogo.api.domain.TokeInfo;
+import com.barogo.api.domain.TokenInfo;
 
 import java.util.Base64.Decoder;
 
@@ -38,8 +38,8 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokeInfo generateToken(Authentication authentication) {
-        System.out.println("@1112222222222222222222222");
+    public TokenInfo generateToken(Authentication authentication) {
+
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
@@ -54,7 +54,13 @@ public class JwtTokenProvider {
         String refeshToken = Jwts.builder().setExpiration(new Date(now + 86400000))
                 .signWith(key, SignatureAlgorithm.HS256).compact();
 
-        return TokeInfo.builder().grantType("Bearer").accessToken(accessToken).refeshToken(refeshToken).build();
+        return TokenInfo.builder()
+                .status("success")
+                .message("token creation successful.")
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refeshToken(refeshToken)
+                .build();
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드

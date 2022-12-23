@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.barogo.api.domain.ResponseInfo;
-import com.barogo.api.domain.TokeInfo;
+import com.barogo.api.domain.TokenInfo;
 import com.barogo.api.domain.UserInfo;
 import com.barogo.api.service.UserService;
 
@@ -37,13 +37,22 @@ public class UserController {
             for (ObjectError objectError : errorList) {
 
                 ResponseInfo response = ResponseInfo.builder()
-                        .response("fail").message(objectError.getDefaultMessage())
+                        .response("fail")
+                        .message(objectError.getDefaultMessage())
                         .build();
-                // response.setResponse("fail");
-                // response.setMessage(objectError.getDefaultMessage());
                 return ResponseEntity.internalServerError().body(response);
 
             }
+        }
+
+        if (userInfo.getName().isEmpty()) {
+
+            ResponseInfo response = ResponseInfo.builder()
+                    .response("fail")
+                    .message("name is a required value.")
+                    .build();
+
+            return ResponseEntity.internalServerError().body(response);
         }
 
         return ResponseEntity.ok().body(userService.singup(userInfo));
@@ -51,22 +60,22 @@ public class UserController {
 
     @PostMapping(value = "/auth/login")
     @ResponseBody
-    public TokeInfo login(@RequestBody @Validated UserInfo userDTO, BindingResult bindingResult) {
+    public ResponseEntity<TokenInfo> login(@RequestBody @Validated UserInfo userInfo, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            System.out.println("에러 있음");
             List<ObjectError> errorList = bindingResult.getAllErrors();
             for (ObjectError objectError : errorList) {
-                System.out.println("error==" + objectError.getDefaultMessage());
-            }
 
+                TokenInfo response = TokenInfo.builder()
+                        .status("fail")
+                        .message(objectError.getDefaultMessage())
+                        .build();
+
+                return ResponseEntity.internalServerError().body(response);
+            }
         }
 
-        TokeInfo info = userService.login(userDTO);
-        System.out.println("access : " + info.getGrantType());
-        System.out.println("access : " + info.getAccessToken());
-        System.out.println("access : " + info.getRefeshToken());
-        return info;
+        return ResponseEntity.ok().body(userService.login(userInfo));
     }
 
 }

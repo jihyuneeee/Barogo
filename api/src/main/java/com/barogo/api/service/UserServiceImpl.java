@@ -1,6 +1,7 @@
 package com.barogo.api.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.json.simple.JSONObject;
@@ -15,9 +16,10 @@ import org.springframework.stereotype.Service;
 
 import com.barogo.api.config.JwtTokenProvider;
 import com.barogo.api.domain.ResponseInfo;
-import com.barogo.api.domain.TokeInfo;
+import com.barogo.api.domain.TokenInfo;
 import com.barogo.api.domain.UserInfo;
 import com.barogo.api.domain.UserRepository;
+import com.barogo.api.utils.TokenUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +33,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    TokenUtil tokenUtil;
 
     private static final String PASSWORD_REGEX = "^(?:(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])|" +
             "(?=.*\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|" +
@@ -59,12 +64,9 @@ public class UserServiceImpl implements UserService {
             userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
             userRepository.save(userInfo);
             responseInfo = ResponseInfo.builder().response("success").message("success").build();
-            // responseInfo.setResponse("success");
-            // jsonObject.put("response", "success");
 
         } else {
-            // responseInfo.setResponse("fail");
-            // responseInfo.setMessage("password that does not meet the conditions.");
+
             responseInfo = ResponseInfo.builder().response("fail")
                     .message("password that does not meet the conditions.").build();
         }
@@ -73,33 +75,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TokeInfo login(UserInfo userDTO) {
+    public TokenInfo login(UserInfo userInfo) {
 
-        String id = userDTO.getId();
-        String password = userDTO.getPassword();
-        TokeInfo tokenInfo = null;
+        String id = userInfo.getId();
+        String password = userInfo.getPassword();
+        String enc_password = passwordEncoder.encode(password);
+        TokenInfo tokenInfo = null;
 
         // 존재하는 ID인지 확인
-        Object data = userRepository.findById(id);
+        Optional<UserInfo> data = userRepository.findById(id);
 
-        if (data == null) {
+        if (!data.isPresent()) {
+
             return tokenInfo;
         }
 
-        // if (data.getPassword().equals(userDTO.getPassword())) {
+        if (passwordEncoder.matches(password, enc_password)) {
 
-        // JWT
-        System.out.println("!!!!????????");
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id,
-                password);
-        System.out.println("2222222 authenticationToken : " + authenticationToken);
+            tokenInfo = tokenUtil.makeToken(id, password);
+            // // JWT
+            // UsernamePasswordAuthenticationToken authenticationToken = new
+            // UsernamePasswordAuthenticationToken(id,
+            // password);
 
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        System.out.println("33333333 authentication : " + authenticationToken);
+            // Authentication authentication =
+            // authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        tokenInfo = jwtTokenProvider.generateToken(authentication);
+            // tokenInfo = jwtTokenProvider.generateToken(authentication);
 
-        System.out.println("tokenInfo : " + tokenInfo);
+        }
 
         return tokenInfo;
     }

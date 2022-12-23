@@ -34,7 +34,6 @@ public class UserInfo implements UserDetails {
     @NotBlank(message = "id is a required value.")
     private String id;
 
-    @NotBlank(message = "name is a required value.")
     @Column(name = "name")
     private String name;
 

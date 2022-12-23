@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.barogo.api.domain.OrderCheck;
 import com.barogo.api.domain.OrderInfo;
 import com.barogo.api.domain.OrderRepository;
 
@@ -20,9 +21,7 @@ public class OrderService {
     @Autowired
     OrderRepository orderRepository;
 
-    public List<OrderInfo> orderList(HashMap<String, Object> params) {
-
-        // 1. Null
+    public List<OrderInfo> orderList(OrderCheck orderCheck) {
 
         // 2. 기간 3일
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -31,23 +30,20 @@ public class OrderService {
         List<OrderInfo> list = null;
 
         try {
-            startDate = formatter.parse(params.get("startDate").toString());
-            endDate = formatter.parse(params.get("endDate").toString());
-            long t = (endDate.getTime() - startDate.getTime()) / 1000;
-            long minus = t / (24 * 60 * 60);
-            System.out.println("startDate : " + startDate.getTime());
-            System.out.println("endDate : " + endDate.getTime());
-            System.out.println("=  : " + minus);
+            startDate = formatter.parse(orderCheck.getStartDate());
+            endDate = formatter.parse(orderCheck.getEndDate());
+
+            long diff = (endDate.getTime() - startDate.getTime()) / 1000;
+            long minus = diff / (24 * 60 * 60);
 
             if (minus > 3) {
-                System.out.println("할수없음.");
 
             } else {
-                list = orderRepository.findByOrderdateBetweenAndId(startDate, endDate, "bbb");
+                list = orderRepository.findByOrderdateBetweenAndId(startDate, endDate, orderCheck.getId());
             }
 
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
 

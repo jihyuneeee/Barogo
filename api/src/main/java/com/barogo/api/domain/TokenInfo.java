@@ -9,10 +9,16 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-public class TokeInfo {
+public class TokenInfo {
+
+    private String status;
+
+    private String message;
 
     private String grantType;
+
     private String accessToken;
+
     private String refeshToken;
 
 }

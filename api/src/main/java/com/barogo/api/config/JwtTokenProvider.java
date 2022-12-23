@@ -14,8 +14,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import com.barogo.api.domain.TokeInfo;
+
 import java.util.Base64.Decoder;
-import com.barogo.api.model.TokeInfo;
+
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

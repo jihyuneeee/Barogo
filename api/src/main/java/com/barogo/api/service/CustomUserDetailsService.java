@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.barogo.api.model.UserDTO;
-import com.barogo.api.model.UserRepository;
+import com.barogo.api.domain.UserInfo;
+import com.barogo.api.domain.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
     }
 
-    private UserDetails createUserDetails(UserDTO user) {
+    private UserDetails createUserDetails(UserInfo user) {
         return User.builder()
                 .username(user.getUsername())
                 .password(passwordEncoder.encode(user.getPassword()))

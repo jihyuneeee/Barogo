@@ -1,4 +1,4 @@
-package com.barogo.api.model;
+package com.barogo.api.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,17 +28,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tbl_usr")
-public class UserDTO implements UserDetails {
+public class UserInfo implements UserDetails {
 
     @Id
-    @NotBlank(message = "id는 필수 값입니다.")
+    @NotBlank(message = "id is a required value.")
     private String id;
 
-    // @NotBlank(message = "name은 필수 값입니다.")
+    @NotBlank(message = "name is a required value.")
     @Column(name = "name")
     private String name;
 
-    @NotBlank(message = "password는 필수 값입니다.")
+    @NotBlank(message = "password is a required value.")
     @Column(name = "password")
     private String password;
 

@@ -3,18 +3,21 @@ package com.barogo.api.service;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 // import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.barogo.api.config.JwtTokenProvider;
-import com.barogo.api.model.TokeInfo;
-import com.barogo.api.model.UserDTO;
-import com.barogo.api.model.UserRepository;
+import com.barogo.api.domain.ResponseInfo;
+import com.barogo.api.domain.TokeInfo;
+import com.barogo.api.domain.UserInfo;
+import com.barogo.api.domain.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     // private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository userRepository;
 
@@ -39,70 +42,64 @@ public class UserServiceImpl implements UserService {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(PASSWORD_REGEX);
 
     @Override
-    public String singup(UserDTO userDTO) {
+    public ResponseInfo singup(UserInfo userInfo) {
 
-        String id = userDTO.getId();
-        String password = userDTO.getPassword();
+        ResponseInfo responseInfo;
 
-        // 존재하는 ID인지 확인
-        Object search_id = userRepository.findById(id);
-        System.out.println("search_id :" + search_id);
-
-        if (search_id != null) {
-            return "";
+        if (userRepository.findById(userInfo.getId()).isPresent()) {
+            // responseInfo.setResponse("fail");
+            // responseInfo.setMessage("the id that already exists.");
+            responseInfo = ResponseInfo.builder().response("fail").message("the id that already exists.").build();
+            return responseInfo;
         }
 
         // 비밀번호 유효성 검사
-        if (PASSWORD_PATTERN.matcher(password).matches()) {
-            System.out.print("The Password " + password + " is valid");
+        if (PASSWORD_PATTERN.matcher(userInfo.getPassword()).matches()) {
 
-            UserDTO test = userRepository.save(userDTO);
-            System.out.println("!!!!!!! test :" + test);
+            userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+            userRepository.save(userInfo);
+            responseInfo = ResponseInfo.builder().response("success").message("success").build();
+            // responseInfo.setResponse("success");
+            // jsonObject.put("response", "success");
+
         } else {
-            System.out.print("The Password " + password + " isn't valid");
+            // responseInfo.setResponse("fail");
+            // responseInfo.setMessage("password that does not meet the conditions.");
+            responseInfo = ResponseInfo.builder().response("fail")
+                    .message("password that does not meet the conditions.").build();
         }
 
-        return null;
+        return responseInfo;
     }
 
     @Override
-    public TokeInfo login(UserDTO userDTO) {
+    public TokeInfo login(UserInfo userDTO) {
 
         String id = userDTO.getId();
         String password = userDTO.getPassword();
         TokeInfo tokenInfo = null;
-        System.out.println("id :" + id);
-        System.out.println("password :" + password);
 
         // 존재하는 ID인지 확인
         Object data = userRepository.findById(id);
-        System.out.println("data :" + data);
 
         if (data == null) {
             return tokenInfo;
         }
 
         // if (data.getPassword().equals(userDTO.getPassword())) {
-        System.out.println("DDDDDDDDDDDDDDD");
-        // JWT
 
+        // JWT
+        System.out.println("!!!!????????");
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id,
                 password);
-        System.out.println("authenticationToken : " + authenticationToken);
+        System.out.println("2222222 authenticationToken : " + authenticationToken);
 
-        // System.out.println("authenticationToken : " + authenticationToken);
-        // System.out.println("11111111" +
-        // authenticationManagerBuilder.getObject().authenticate(authenticationToken));
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        // Authentication authentication =
-        // authenticationManager.authenticate(authenticationToken);
-        System.out.println("authentication : " + authenticationToken);
+        System.out.println("33333333 authentication : " + authenticationToken);
 
         tokenInfo = jwtTokenProvider.generateToken(authentication);
 
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         System.out.println("tokenInfo : " + tokenInfo);
-        // }
 
         return tokenInfo;
     }

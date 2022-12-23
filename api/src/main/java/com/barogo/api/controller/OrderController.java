@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.barogo.api.model.OrderInfo;
+import com.barogo.api.domain.OrderInfo;
 import com.barogo.api.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +42,7 @@ public class OrderController {
     @ResponseBody
     public void orderChange(HttpServletRequest request, @RequestBody HashMap<String, Object> params) {
         System.out.println("###################");
+        System.out.println("params :" + params);
 
         // orderService.orderList(params);
         // order_id / address null check

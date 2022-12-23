@@ -6,11 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.barogo.api.model.OrderInfo;
-import com.barogo.api.model.OrderRepository;
+import com.barogo.api.domain.OrderInfo;
+import com.barogo.api.domain.OrderRepository;
 
 @Service
 public class OrderService {
@@ -52,16 +54,25 @@ public class OrderService {
         return list;
     }
 
+    @Transactional
     public void orderChange(HashMap<String, Object> params) {
 
+        int order_no = (int) params.get("order_no");
+        String address = params.get("address").toString();
+        System.out.println("order_no :" + order_no);
+        System.out.println("address :" + address);
         // status 조회해서 가능한지 확인
-        OrderInfo test = orderRepository.findByOrdernoAndStatus(1, 0);
+        OrderInfo test = orderRepository.findByOrdernoAndStatus(order_no, 0);
         System.out.println("test   :::: " + test);
 
         // 가능하면 변경
         if (test != null) {
 
+            test.setAddress(address);
+
+            // orderRepository.updateAddress(address, order_no);
         }
 
     }
+
 }

@@ -1,4 +1,4 @@
-package com.barogo.api.model;
+package com.barogo.api.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

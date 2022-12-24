@@ -27,10 +27,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    // private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -54,7 +52,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findById(userInfo.getId()).isPresent()) {
             // responseInfo.setResponse("fail");
             // responseInfo.setMessage("the id that already exists.");
-            responseInfo = ResponseInfo.builder().response("fail").message("the id that already exists.").build();
+            responseInfo = ResponseInfo.builder().status("fail").message("the id that already exists.").build();
             return responseInfo;
         }
 
@@ -63,11 +61,11 @@ public class UserServiceImpl implements UserService {
 
             userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
             userRepository.save(userInfo);
-            responseInfo = ResponseInfo.builder().response("success").message("success").build();
+            responseInfo = ResponseInfo.builder().status("success").message("success").build();
 
         } else {
 
-            responseInfo = ResponseInfo.builder().response("fail")
+            responseInfo = ResponseInfo.builder().status("fail")
                     .message("password that does not meet the conditions.").build();
         }
 

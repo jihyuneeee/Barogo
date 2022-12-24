@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class ResponseInfo {
 
-    private String response;
+    private String status;
 
     private String message;
 }

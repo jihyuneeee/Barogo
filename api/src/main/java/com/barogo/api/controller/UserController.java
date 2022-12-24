@@ -2,10 +2,7 @@ package com.barogo.api.controller;
 
 import java.util.List;
 import javax.annotation.Resource;
-
-import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -13,12 +10,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.barogo.api.domain.ResponseInfo;
 import com.barogo.api.domain.TokenInfo;
 import com.barogo.api.domain.UserInfo;
 import com.barogo.api.service.UserService;
-
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -28,7 +23,7 @@ public class UserController {
     @Resource
     UserService userService;
 
-    @PostMapping("/auth/singup")
+    @PostMapping("/auth/signup")
     @ResponseBody
     public ResponseEntity<ResponseInfo> singup(@RequestBody @Validated UserInfo userInfo, BindingResult bindingResult) {
 
@@ -37,7 +32,7 @@ public class UserController {
             for (ObjectError objectError : errorList) {
 
                 ResponseInfo response = ResponseInfo.builder()
-                        .response("fail")
+                        .status("fail")
                         .message(objectError.getDefaultMessage())
                         .build();
                 return ResponseEntity.internalServerError().body(response);
@@ -48,7 +43,7 @@ public class UserController {
         if (userInfo.getName().isEmpty()) {
 
             ResponseInfo response = ResponseInfo.builder()
-                    .response("fail")
+                    .status("fail")
                     .message("name is a required value.")
                     .build();
 

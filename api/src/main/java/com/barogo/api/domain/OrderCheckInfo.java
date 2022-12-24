@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class OrderCheck {
+public class OrderCheckInfo {
 
     @NotBlank(message = "id is a required value.")
     private String id;

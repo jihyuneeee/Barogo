@@ -5,13 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.transaction.Transactional;
-
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.barogo.api.domain.OrderCheckInfo;
 import com.barogo.api.domain.OrderInfo;
 import com.barogo.api.domain.OrderRepository;

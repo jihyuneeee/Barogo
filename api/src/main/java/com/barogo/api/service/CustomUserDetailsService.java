@@ -17,20 +17,18 @@ import lombok.RequiredArgsConstructor;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 
         return userRepository.findById(id).map(
                 this::createUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UsernameNotFoundException("user could not be found."));
     }
 
     private UserDetails createUserDetails(UserInfo user) {
         return User.builder()
                 .username(user.getUsername())
-                // .password(passwordEncoder.encode(user.getPassword()))
                 .password(user.getPassword())
                 .roles(user.getRoles().toArray(new String[0]))
                 .build();

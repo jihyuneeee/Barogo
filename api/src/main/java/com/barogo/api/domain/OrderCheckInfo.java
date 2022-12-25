@@ -1,9 +1,6 @@
 package com.barogo.api.domain;
 
-import java.sql.Date;
-
 import javax.validation.constraints.NotBlank;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

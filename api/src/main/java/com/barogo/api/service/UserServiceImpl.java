@@ -1,20 +1,10 @@
 package com.barogo.api.service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-// import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.barogo.api.config.JwtTokenProvider;
 import com.barogo.api.domain.ResponseInfo;
 import com.barogo.api.domain.TokenInfo;
 import com.barogo.api.domain.UserInfo;
@@ -90,16 +80,8 @@ public class UserServiceImpl implements UserService {
 
         if (passwordEncoder.matches(password, enc_password)) {
 
+            // JWT token 
             tokenInfo = tokenUtil.makeToken(id, password);
-            // // JWT
-            // UsernamePasswordAuthenticationToken authenticationToken = new
-            // UsernamePasswordAuthenticationToken(id,
-            // password);
-
-            // Authentication authentication =
-            // authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-            // tokenInfo = jwtTokenProvider.generateToken(authentication);
 
         }
 
